@@ -82,7 +82,7 @@ function titleFrom(messages: StoredMessage[]): string {
     .replace(/\s+/g, " ")
     .trim();
   if (!text) return "New chat";
-  return text.length > 48 ? `${text.slice(0, 48)}â€¦` : text;
+  return text.length > 48 ? `${text.slice(0, 48)}…` : text;
 }
 
 export default function Page() {
@@ -273,7 +273,7 @@ export default function Page() {
           },
           onFallback: (e) => {
             const target = config?.providers.find((p) => p.id === e.to)?.label ?? e.to;
-            setNote(`${e.reason} â†’ switching to ${target}`);
+            setNote(`${e.reason} → switching to ${target}`);
           },
           onDone: (e) => {
             flush();
@@ -290,7 +290,7 @@ export default function Page() {
                   type: "text",
                   text:
                     (m.parts.map((p) => (p.type === "text" ? p.text : "")).join("") || "") +
-                    `\n\nâš ï¸ ${message}`,
+                    `\n\n⚠️ ${message}`,
                 },
               ],
             }));
@@ -324,7 +324,7 @@ export default function Page() {
         parts: [
           {
             type: "text",
-            text: `âš ï¸ ${err instanceof Error ? err.message : String(err)}`,
+            text: `⚠️ ${err instanceof Error ? err.message : String(err)}`,
           },
         ],
       }));
@@ -402,13 +402,13 @@ export default function Page() {
         chips
           .filter((c) => c.kind === "image" || c.kind === "pdf" || c.kind === "docx" || c.kind === "sheet" || c.kind === "slides")
           .map((c) => `${c.name} (${c.detail})`)
-          .join(" Â· "),
+          .join(" · "),
         problems.length
-          ? `âš ï¸ ${problems.map((c) => `${c.name}: ${c.detail}`).join(" Â· ")}`
+          ? `⚠️ ${problems.map((c) => `${c.name}: ${c.detail}`).join(" · ")}`
           : "",
       ]
         .filter(Boolean)
-        .join(" â€” ") || null,
+        .join(" — ") || null,
     );
   }
 
@@ -488,7 +488,7 @@ export default function Page() {
   /* ----------------------------------------------------------------- view */
 
   if (gate === "loading") {
-    return <div className="flex min-h-screen items-center justify-center text-neutral-500">Loadingâ€¦</div>;
+    return <div className="flex min-h-screen items-center justify-center text-neutral-500">Loading…</div>;
   }
   if (gate === "locked") {
     return <PasscodeGate onUnlock={() => { setGate("open"); void loadConfig(); }} />;
@@ -576,7 +576,7 @@ export default function Page() {
               title="Smart = strongest model, Fast = quickest/cheapest"
               className="rounded border border-neutral-700 px-2 py-1 text-xs hover:bg-neutral-800 disabled:opacity-40"
             >
-              {settings.tier === "smart" ? "ðŸ§  Smart" : "âš¡ Fast"}
+              {settings.tier === "smart" ? "🧠 Smart" : "⚡ Fast"}
             </button>
 
             <label
@@ -604,7 +604,7 @@ export default function Page() {
                 onClick={() => setPrintTarget("all")}
                 className="rounded border border-neutral-700 px-2 py-1 text-xs text-neutral-400 hover:bg-neutral-800"
               >
-                ðŸ–¨ Print
+                🖨 Print
               </button>
             )}
           </div>

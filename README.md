@@ -2,11 +2,11 @@
 
 One chat app for yourself. Pick an agent like a plugin, drop in as many photos and
 documents as you like, and let the app fall back to another model provider when one
-fails â€” so you are never stuck at 3 attachments with an error.
+fails — so you are never stuck at 3 attachments with an error.
 
 - **20 agents**, grouped by category, switchable mid-chat
 - **Unlimited-ish attachments**: many images at once, PDFs, Word, Excel, PowerPoint, text/code, voice notes
-- **Automatic model fallback**: OpenAI â†’ Gemini â†’ NVIDIA â†’ Groq
+- **Automatic model fallback**: OpenAI → Gemini → NVIDIA → Groq
 - **Private mode**: routes everything to Gemini only and keeps no history
 - **Passcode gate** so the URL is not open to the world
 - **History stays in your browser** (IndexedDB). No database, no server-side log of your chats
@@ -21,7 +21,7 @@ cp .env.example .env.local     # then fill in your keys
 npm run dev                    # http://localhost:3000
 ```
 
-`APP_PASSCODE` and `SESSION_SECRET` are required â€” without them the app refuses to
+`APP_PASSCODE` and `SESSION_SECRET` are required — without them the app refuses to
 start and the login page cannot unlock.
 
 Two front-ends are kept in the tree right now:
@@ -42,10 +42,10 @@ npx vercel            # first time
 npx vercel --prod     # when it works locally
 ```
 
-Or import the repo at [vercel.com/new](https://vercel.com/new) â€” the build settings
+Or import the repo at [vercel.com/new](https://vercel.com/new) — the build settings
 are already correct (Next.js is auto-detected).
 
-Add these as **Project â†’ Settings â†’ Environment Variables**:
+Add these as **Project → Settings → Environment Variables**:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
@@ -66,12 +66,12 @@ Gemini/NVIDIA/Groq (see `.env.example`), plus `MAX_IMAGES_PER_MESSAGE` and
 ## 3. Deploy to Cloudflare Workers
 
 The code was written for this to be easy. Nothing in `lib/providers`, `lib/extract.ts`
-or `lib/auth.ts` touches Node built-ins â€” only `fetch`, `ReadableStream`,
+or `lib/auth.ts` touches Node built-ins — only `fetch`, `ReadableStream`,
 `TextDecoder`, `FormData`, `btoa` and Web Crypto.
 
 1. `npm i @opennextjs/cloudflare` and follow the OpenNext adapter setup
    (`wrangler.jsonc` + `open-next.config.ts`).
-2. Delete the `export const runtime = "nodejs"` lines in `app/api/*/route.ts` â€”
+2. Delete the `export const runtime = "nodejs"` lines in `app/api/*/route.ts` —
    Workers run on workerd, not Node. Nothing else changes.
 3. `npx opennextjs-cloudflare build && npx wrangler deploy`
 4. Set the same environment variables as `wrangler secret put APP_PASSCODE` etc.
@@ -86,12 +86,12 @@ are actually easier there.
 `lib/models.ts` owns the catalog and the chain logic.
 
 ```
-default order:  OpenAI  â†’  Gemini  â†’  NVIDIA  â†’  Groq
+default order:  OpenAI  →  Gemini  →  NVIDIA  →  Groq
 ```
 
 For every message the server builds the candidate list:
 
-1. **Private mode on** â†’ the list is exactly one entry: Gemini. OpenAI is never
+1. **Private mode on** → the list is exactly one entry: Gemini. OpenAI is never
    contacted, even if it is the pinned provider. That is the whole point of the mode.
 2. **Providers without a key are dropped**, with the reason reported to Settings.
 3. **Providers that cannot read your attachments are dropped.** This is what makes
@@ -111,7 +111,7 @@ change, not a code change.
 
 | Type | Path |
 | --- | --- |
-| Images (jpg/png/webp/heic-as-jpeg) | Resized in your browser to â‰¤1568px and re-encoded until under ~220 KB, then sent as a data URI to a vision model |
+| Images (jpg/png/webp/heic-as-jpeg) | Resized in your browser to ≤1568px and re-encoded until under ~220 KB, then sent as a data URI to a vision model |
 | PDF | Sent natively to OpenAI/Gemini. If no PDF-capable provider is configured, text is extracted on the server instead |
 | .docx / .xlsx / .pptx | Text extracted on the server (`jszip` for OOXML, `unpdf` for PDF), wrapped in `<document name="...">` tags |
 | .txt / .md / .csv / code files | Read in the browser when small, otherwise extracted on the server |
@@ -127,7 +127,7 @@ Limits, and why:
   than the request failing. Text is always kept.
 - **Single files up to 8 MB** for extraction. Larger files go through the browser and
   are refused with a clear message.
-- Scanned PDFs with no text layer report that they are image-only â€” send those as
+- Scanned PDFs with no text layer report that they are image-only — send those as
   photos instead so a vision model can read them.
 
 ## Agents
@@ -142,7 +142,7 @@ Limits, and why:
 
 Every agent lives in `lib/agents.ts` as one object: name, emoji, tagline, category,
 system prompt, three starter prompts, preferred model tier, and whether it offers a
-Print button. Adding one is a single array entry â€” no registration step anywhere else.
+Print button. Adding one is a single array entry — no registration step anywhere else.
 
 Health-adjacent agents (Doctor, Psycho, Fitness, Money) carry explicit guardrails in
 their prompts: no diagnosis, no dose changes, no guaranteed financial outcomes, and
@@ -154,7 +154,7 @@ crisis handling in Psycho that points at real human help.
 {
   id: "myagent",
   name: "My Agent",
-  emoji: "ðŸ¦‰",
+  emoji: "🦉",
   tagline: "One line for the picker",
   category: "work",            // general | kids | health | work | life
   tier: "smart",               // smart | fast
@@ -199,13 +199,43 @@ verify/             adapter + SSE tests: npm run verify
 ## Checks
 
 ```bash
-npm run typecheck   # tsc, no errors expected
-npm run build       # 12 routes
-npm run verify      # 13 assertions over the streaming adapters and SSE parser
+npm run typecheck    # tsc, no errors expected
+npm run build        # 12 routes
+npm run verify       # 13 assertions over the streaming adapters and SSE parser
+npm run verify:smoke # 11 assertions against a running dev server
 ```
 
 `npm run verify` compiles the provider adapters to a temp dir and runs them against
 a local mock server, so it needs no API key and no network.
+
+`npm run verify:smoke` needs `npm run dev` running in another terminal. It reads
+`APP_PASSCODE` from `.env.local`, so it is zero-config. It checks the passcode gate,
+both front-ends, and the error paths, and it asserts the rendered HTML is clean
+UTF-8 — a cp1252 round trip once shipped mojibake into the UI, so this guards
+against it coming back.
+
+### The chat wire format
+
+`POST /api/chat` takes `messages: [{ role, parts: [...] }]`. Attachments are inlined
+as parts, there is no `attachments` or `content` field:
+
+```jsonc
+{
+  "agentId": "general",
+  "tier": "smart",              // smart | fast
+  "provider": "auto",           // auto | openai | gemini | nvidia | groq
+  "privacy": false,             // true collapses the chain to Gemini only
+  "messages": [
+    { "role": "user", "parts": [
+      { "type": "text",  "text": "what is in this photo?" },
+      { "type": "image", "mime": "image/jpeg", "data": "<base64>" },
+      { "type": "file",  "name": "notes.pdf", "mime": "application/pdf", "data": "<base64>" }
+    ]}
+  ]
+}
+```
+
+Responses are SSE `ChatEvent`s (`start`, `delta`, `fallback`, `done`, `error`).
 
 ## Notes
 

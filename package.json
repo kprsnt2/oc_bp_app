@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "verify": "tsc lib/providers/openaiCompatible.ts lib/providers/stream.ts lib/types.ts --outDir .tmp-verify --module commonjs --target es2022 --moduleResolution node --skipLibCheck --esModuleInterop && node verify/adapter.test.cjs"
+    "verify": "tsc lib/providers/openaiCompatible.ts lib/providers/stream.ts lib/types.ts --outDir .tmp-verify --module commonjs --target es2022 --moduleResolution node --skipLibCheck --esModuleInterop && node verify/adapter.test.cjs",
+    "verify:smoke": "node verify/smoke.test.cjs"
   },
   "dependencies": {
     "jszip": "3.10.2",

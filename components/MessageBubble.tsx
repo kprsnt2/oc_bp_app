@@ -52,7 +52,7 @@ export default function MessageBubble({ message, agent, onRegenerate, onPrint, i
             {message.meta?.label ? (
               <span className="rounded-full bg-ink-800 px-2 py-0.5 text-ink-400">
                 {message.meta.label}
-                {message.meta.ms ? ` Â· ${(message.meta.ms / 1000).toFixed(1)}s` : ""}
+                {message.meta.ms ? ` · ${(message.meta.ms / 1000).toFixed(1)}s` : ""}
               </span>
             ) : null}
             {message.meta?.partial ? (
@@ -83,8 +83,8 @@ export default function MessageBubble({ message, agent, onRegenerate, onPrint, i
                   key={name}
                   className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-ink-700 bg-ink-850 px-2 py-1 text-[11px] text-ink-300"
                 >
-                  ðŸ“„ <span className="truncate">{name}</span>
-                  <span className="text-ink-400">Â· text extracted</span>
+                  📄 <span className="truncate">{name}</span>
+                  <span className="text-ink-400">· text extracted</span>
                 </span>
               ))}
             </div>
@@ -97,7 +97,7 @@ export default function MessageBubble({ message, agent, onRegenerate, onPrint, i
                   key={f.name}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-ink-700 bg-ink-850 px-2 py-1 text-[11px] text-ink-300"
                 >
-                  ðŸ“Ž <span className="truncate">{f.name}</span>
+                  📎 <span className="truncate">{f.name}</span>
                 </div>
               ))}
             </div>
@@ -142,7 +142,7 @@ export default function MessageBubble({ message, agent, onRegenerate, onPrint, i
             ) : null}
             {onPrint && agent.printable ? (
               <ActionButton
-                onClick={() => onPrint(shown.text, `${agent.name} â€” worksheet`)}
+                onClick={() => onPrint(shown.text, `${agent.name} — worksheet`)}
               >
                 Print
               </ActionButton>

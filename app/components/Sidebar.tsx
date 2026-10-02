@@ -53,14 +53,14 @@ export default function Sidebar({
     <aside className="flex w-72 shrink-0 flex-col border-r border-neutral-800 bg-neutral-950">
       <div className="border-b border-neutral-800 p-3">
         <div className="flex items-center gap-2">
-          <span className="text-lg">âœ¨</span>
+          <span className="text-lg">✨</span>
           <span className="font-semibold">AI Wish</span>
           <button
             onClick={onLock}
             title="Lock the app"
             className="ml-auto rounded p-1 text-neutral-500 hover:bg-neutral-800 hover:text-neutral-200"
           >
-            ðŸ”’
+            🔒
           </button>
         </div>
         <button
@@ -89,12 +89,12 @@ export default function Sidebar({
                   }`}
                   onClick={() => onSelectConversation(c.id)}
                 >
-                  <span className="shrink-0">{agent?.emoji ?? "ðŸ’¬"}</span>
+                  <span className="shrink-0">{agent?.emoji ?? "💬"}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate">{c.title}</span>
                     <span className="block text-[11px] text-neutral-500">
                       {timeAgo(c.updatedAt)}
-                      {c.privacy ? " Â· private" : ""}
+                      {c.privacy ? " · private" : ""}
                     </span>
                   </span>
                   <button
@@ -105,7 +105,7 @@ export default function Sidebar({
                     title="Delete chat"
                     className="shrink-0 rounded px-1 text-neutral-600 opacity-0 hover:text-red-400 group-hover:opacity-100"
                   >
-                    âœ•
+                    ✕
                   </button>
                 </div>
               );
@@ -139,7 +139,7 @@ export default function Sidebar({
                     <span className="font-medium">{a.name}</span>
                     {a.printable && (
                       <span className="ml-1 text-[10px] text-neutral-500" title="Printable output">
-                        ðŸ–¨
+                        🖨
                       </span>
                     )}
                     <span className="block text-[11px] leading-tight text-neutral-500">

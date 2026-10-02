@@ -48,8 +48,8 @@ function Attachments({ parts }: { parts: MessagePart[] }) {
               key={i}
               className="rounded border border-neutral-700 bg-neutral-900 px-2 py-0.5 text-[11px] text-neutral-400"
             >
-              ðŸ“„ {p.type === "text" ? p.name ?? "text" : p.name}
-              {p.type === "text" && p.truncated ? " Â· trimmed" : ""}
+              📄 {p.type === "text" ? p.name ?? "text" : p.name}
+              {p.type === "text" && p.truncated ? " · trimmed" : ""}
             </span>
           ))}
         </div>
@@ -128,8 +128,8 @@ export default function MessageList({
                   <div className="mb-1 flex items-center gap-2 text-xs text-neutral-500">
                     <span>{agent.emoji}</span>
                     <span>{agent.name}</span>
-                    {m.modelLabel && <span>Â· {m.modelLabel}</span>}
-                    {m.error && <span className="text-red-400">Â· failed</span>}
+                    {m.modelLabel && <span>· {m.modelLabel}</span>}
+                    {m.error && <span className="text-red-400">· failed</span>}
                   </div>
                 )}
                 <div
@@ -148,7 +148,7 @@ export default function MessageList({
                     <Markdown>{body}</Markdown>
                   ) : (
                     <span className="text-neutral-500">
-                      {streaming && isLast ? "thinkingâ€¦" : "(empty)"}
+                      {streaming && isLast ? "thinking…" : "(empty)"}
                     </span>
                   )}
                 </div>

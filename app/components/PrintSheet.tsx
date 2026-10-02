@@ -39,7 +39,7 @@ export default function PrintSheet({
         </h1>
         {answers.length > 1 && (
           <p className="print-sub">
-            {answers.length} pages Â· printed {new Date().toLocaleDateString()}
+            {answers.length} pages · printed {new Date().toLocaleDateString()}
           </p>
         )}
       </header>
