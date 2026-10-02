@@ -2,11 +2,11 @@
 
 One chat app for yourself. Pick an agent like a plugin, drop in as many photos and
 documents as you like, and let the app fall back to another model provider when one
-fails — so you are never stuck at 3 attachments with an error.
+fails â€” so you are never stuck at 3 attachments with an error.
 
 - **20 agents**, grouped by category, switchable mid-chat
 - **Unlimited-ish attachments**: many images at once, PDFs, Word, Excel, PowerPoint, text/code, voice notes
-- **Automatic model fallback**: OpenAI → Gemini → NVIDIA → Groq
+- **Automatic model fallback**: OpenAI â†’ Gemini â†’ NVIDIA â†’ Groq
 - **Private mode**: routes everything to Gemini only and keeps no history
 - **Passcode gate** so the URL is not open to the world
 - **History stays in your browser** (IndexedDB). No database, no server-side log of your chats
@@ -21,8 +21,19 @@ cp .env.example .env.local     # then fill in your keys
 npm run dev                    # http://localhost:3000
 ```
 
-`APP_PASSCODE` and `SESSION_SECRET` are required — without them the app refuses to
+`APP_PASSCODE` and `SESSION_SECRET` are required â€” without them the app refuses to
 start and the login page cannot unlock.
+
+Two front-ends are kept in the tree right now:
+
+| Route | Source | Use it for |
+| --- | --- | --- |
+| `/` | `components/ChatApp.tsx` | the full app: voice notes, print, agent picker |
+| `/basic` | `app/basic/page.tsx` + `app/components/` | a leaner, all-client-side variant |
+
+Both talk to the same `/api/chat` stream and the same auth gate. `/basic` extracts
+documents in the browser instead of uploading them to `/api/extract`, which keeps
+private files off the server entirely. Delete one when you have decided.
 
 ## 2. Deploy to Vercel
 
@@ -31,10 +42,10 @@ npx vercel            # first time
 npx vercel --prod     # when it works locally
 ```
 
-Or import the repo at [vercel.com/new](https://vercel.com/new) — the build settings
+Or import the repo at [vercel.com/new](https://vercel.com/new) â€” the build settings
 are already correct (Next.js is auto-detected).
 
-Add these as **Project → Settings → Environment Variables**:
+Add these as **Project â†’ Settings â†’ Environment Variables**:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
@@ -55,12 +66,12 @@ Gemini/NVIDIA/Groq (see `.env.example`), plus `MAX_IMAGES_PER_MESSAGE` and
 ## 3. Deploy to Cloudflare Workers
 
 The code was written for this to be easy. Nothing in `lib/providers`, `lib/extract.ts`
-or `lib/auth.ts` touches Node built-ins — only `fetch`, `ReadableStream`,
+or `lib/auth.ts` touches Node built-ins â€” only `fetch`, `ReadableStream`,
 `TextDecoder`, `FormData`, `btoa` and Web Crypto.
 
 1. `npm i @opennextjs/cloudflare` and follow the OpenNext adapter setup
    (`wrangler.jsonc` + `open-next.config.ts`).
-2. Delete the `export const runtime = "nodejs"` lines in `app/api/*/route.ts` —
+2. Delete the `export const runtime = "nodejs"` lines in `app/api/*/route.ts` â€”
    Workers run on workerd, not Node. Nothing else changes.
 3. `npx opennextjs-cloudflare build && npx wrangler deploy`
 4. Set the same environment variables as `wrangler secret put APP_PASSCODE` etc.
@@ -75,12 +86,12 @@ are actually easier there.
 `lib/models.ts` owns the catalog and the chain logic.
 
 ```
-default order:  OpenAI  →  Gemini  →  NVIDIA  →  Groq
+default order:  OpenAI  â†’  Gemini  â†’  NVIDIA  â†’  Groq
 ```
 
 For every message the server builds the candidate list:
 
-1. **Private mode on** → the list is exactly one entry: Gemini. OpenAI is never
+1. **Private mode on** â†’ the list is exactly one entry: Gemini. OpenAI is never
    contacted, even if it is the pinned provider. That is the whole point of the mode.
 2. **Providers without a key are dropped**, with the reason reported to Settings.
 3. **Providers that cannot read your attachments are dropped.** This is what makes
@@ -100,7 +111,7 @@ change, not a code change.
 
 | Type | Path |
 | --- | --- |
-| Images (jpg/png/webp/heic-as-jpeg) | Resized in your browser to ≤1568px and re-encoded until under ~220 KB, then sent as a data URI to a vision model |
+| Images (jpg/png/webp/heic-as-jpeg) | Resized in your browser to â‰¤1568px and re-encoded until under ~220 KB, then sent as a data URI to a vision model |
 | PDF | Sent natively to OpenAI/Gemini. If no PDF-capable provider is configured, text is extracted on the server instead |
 | .docx / .xlsx / .pptx | Text extracted on the server (`jszip` for OOXML, `unpdf` for PDF), wrapped in `<document name="...">` tags |
 | .txt / .md / .csv / code files | Read in the browser when small, otherwise extracted on the server |
@@ -116,7 +127,7 @@ Limits, and why:
   than the request failing. Text is always kept.
 - **Single files up to 8 MB** for extraction. Larger files go through the browser and
   are refused with a clear message.
-- Scanned PDFs with no text layer report that they are image-only — send those as
+- Scanned PDFs with no text layer report that they are image-only â€” send those as
   photos instead so a vision model can read them.
 
 ## Agents
@@ -131,7 +142,7 @@ Limits, and why:
 
 Every agent lives in `lib/agents.ts` as one object: name, emoji, tagline, category,
 system prompt, three starter prompts, preferred model tier, and whether it offers a
-Print button. Adding one is a single array entry — no registration step anywhere else.
+Print button. Adding one is a single array entry â€” no registration step anywhere else.
 
 Health-adjacent agents (Doctor, Psycho, Fitness, Money) carry explicit guardrails in
 their prompts: no diagnosis, no dose changes, no guaranteed financial outcomes, and
@@ -143,7 +154,7 @@ crisis handling in Psycho that points at real human help.
 {
   id: "myagent",
   name: "My Agent",
-  emoji: "🦉",
+  emoji: "ðŸ¦‰",
   tagline: "One line for the picker",
   category: "work",            // general | kids | health | work | life
   tier: "smart",               // smart | fast
@@ -158,23 +169,43 @@ crisis handling in Psycho that points at real human help.
 
 ```
 app/
-  api/chat/        streaming endpoint + fallback loop
-  api/extract/     pdf/docx/xlsx/pptx/text -> text
-  api/transcribe/  audio -> text, with its own provider chain
-  api/health/      which providers and models are usable
-  api/auth/        passcode in, signed cookie out
-  login/           unlock screen
-components/        chat shell, agent picker, composer, message rendering
+  page.tsx          mounts components/ChatApp
+  basic/            the leaner client-side front-end
+  api/chat/         streaming endpoint + fallback loop (SSE)
+  api/extract/      pdf/docx/xlsx/pptx/text -> text
+  api/transcribe/   audio -> text, with its own provider chain
+  api/health/       which providers and models are usable
+  api/config/       model catalog for the /basic model picker
+  api/auth/         passcode in, signed cookie out (+ login/logout)
+  components/       front-end used by /basic
+  lib/              client helpers used by /basic
+  login/            unlock screen
+components/         chat shell, agent picker, composer, message rendering
 lib/
-  agents.ts        the 20 agent definitions
-  models.ts        model catalog + chain builder (capability aware)
-  providers/       one adapter per provider, Web APIs only
-  extract.ts       document text extraction
-  attachments.ts   browser-side image compression and file preparation
-  store.ts         IndexedDB history + preferences
-  auth.ts          HMAC-signed session cookie
-middleware.ts      passcode gate
+  agents.ts         the 20 agent definitions
+  models.ts         model catalog + chain builder (capability aware)
+  providers/        one adapter per provider, Web APIs only
+  trim.ts           history windowing + old attachments -> placeholder notes
+  extract.ts        document text extraction
+  attachments.ts    browser-side image compression and file preparation
+  idb.ts            the single IndexedDB connection (both stores)
+  store.ts          IndexedDB history + preferences
+  format.ts         small display helpers
+  auth.ts           HMAC-signed session cookie (Web Crypto, Edge-safe)
+middleware.ts       passcode gate
+verify/             adapter + SSE tests: npm run verify
 ```
+
+## Checks
+
+```bash
+npm run typecheck   # tsc, no errors expected
+npm run build       # 12 routes
+npm run verify      # 13 assertions over the streaming adapters and SSE parser
+```
+
+`npm run verify` compiles the provider adapters to a temp dir and runs them against
+a local mock server, so it needs no API key and no network.
 
 ## Notes
 
